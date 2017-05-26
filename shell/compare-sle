@@ -1,0 +1,35 @@
+#!/bin/bash
+
+FILE="packages"
+SOURCE="SUSE:SLE-12-SP3:GA"
+TARGET="openSUSE:Leap:42.3"
+MESSAGE="Manual diff reviewed"
+
+LOG="log"
+
+if [ ! -f "$FILE" ] ; then
+  echo "No $FILE found"
+fi
+
+packages=($(grep -P "^[^ ]+$" "$FILE"))
+
+echo "${#packages[@]} packages"
+echo
+
+for package in ${packages[@]} ; do
+#   echo "$package"
+#   echo "============================================================="
+  osc rdiff "$TARGET" "$package" "$SOURCE"
+#   echo osc rdiff "$SOURCE" "$package" "$TARGET"
+  echo -n "Submit $package? (y/n:reason) [y]: "
+  read answer
+  if [ "$answer" == "" ] || [ "$answer" == "y" ] ; then
+    # created request id 497904
+    out=($(osc sr -m "$MESSAGE" "$SOURCE" "$package" "$TARGET" | tee /dev/tty))
+    if [ ${#out[@]} -eq 4 ] ; then
+      echo "$package: created request ${out[3]}" >> "$LOG"
+    fi
+  else
+    echo "$package: $answer" >> "$LOG"
+  fi
+done
