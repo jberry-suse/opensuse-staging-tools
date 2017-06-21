@@ -34,4 +34,38 @@
     $('#review_comment_0').text('no diff');
     $('input[type="submit"][value="Disregard"]:visible').click();
   });
+
+  var key = 'jberry-suse/opensuse-staging-tools/ignored_requests';
+  function ignore_pre() {
+    var ignored = JSON.parse(localStorage.getItem(key));
+    if (!ignored) {
+      ignored = [];
+    }
+    var parts = window.location.href.split('/');
+    var request_id = parts[parts.length - 1];
+    return [ignored, request_id];
+  }
+  listener.simple_combo("alt i", function() {
+    var ignored, request_id;
+    [ignored, request_id] = ignore_pre();
+    if (ignored.indexOf(request_id) == -1) {
+      ignored.push(request_id);
+      localStorage.setItem(key, JSON.stringify(ignored));
+      console.log(ignored);
+      $('#review_comment_0').text('<!-- ignored -->');
+    }
+  });
+  listener.simple_combo("alt u", function() {
+    var ignored, request_id;
+    [ignored, request_id] = ignore_pre();
+    if (ignored) {
+      var index = ignored.indexOf(request_id);
+      if (index > -1) {
+        ignored.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(ignored));
+        console.log(ignored);
+        $('#review_comment_0').text('<!-- unignored -->');
+      }
+    }
+  });
 })();
