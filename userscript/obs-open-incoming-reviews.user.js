@@ -25,7 +25,10 @@
     return ignored.indexOf(request_id) != -1;
   }
 
-  setTimeout(function() {
+  var observer = new MutationObserver(function(mutations, observer) {
+    // Ignore while set to processing.
+    if ($(mutations[0].target).css('display') != 'none') return;
+
     $('table#reviews_in_table a.request_link').each(function(index) {
       if (is_ignored($(this).attr('href'))) {
         $(this).parent().parent().css('opacity', '0.5');
@@ -36,5 +39,6 @@
       console.log($(this).attr('href'));
       window.open($(this).attr("href"), "_blank");
     });
-  }, 2000);
+  });
+  observer.observe(document.getElementById('reviews_in_table_processing'), {attributes: true});
 })();
