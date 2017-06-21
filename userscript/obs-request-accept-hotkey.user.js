@@ -30,4 +30,8 @@
     $('#review_comment_0').text('ok');
     $('input[type="submit"][value="Approve"]:visible').click();
   });
+  listener.simple_combo("alt d", function() {
+    $('#review_comment_0').text('no diff');
+    $('input[type="submit"][value="Disregard"]:visible').click();
+  });
 })();
