@@ -23,7 +23,10 @@
   }
 
   // Focus on leaper comment.
-  $(window).scrollTop($('div.comment:has(a:contains(leaper))').offset().top);
+  var leaper = $('div.comment:has(a:contains(leaper))');
+  if (leaper.length > 0) {
+    $(window).scrollTop(leaper.offset().top);
+  }
 
   var listener = new window.keypress.Listener();
   listener.simple_combo("alt a", function() {
